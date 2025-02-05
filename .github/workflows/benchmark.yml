@@ -10,7 +10,7 @@ permissions:
 jobs:
   publish-docker-images-with-docker:
     name: Build with Docker
-    runs-on: depot-ubuntu-latest
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         flavor:
@@ -42,10 +42,52 @@ jobs:
           context: ./upstream
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
           build-args: |
             PYTHON_VERSION=${{ matrix.python-version }}
             NODE_VERSION=${{ steps.get_node_version.outputs.NODE_VERSION }}
             ${{ ( endsWith(matrix.flavor, 'conda') && 'BASE_IMAGE=prefect-conda' ) || '' }}
             ${{ ( endsWith(matrix.flavor, 'kubernetes') && 'PREFECT_EXTRAS=[redis,kubernetes]' ) || '' }}
           pull: true
+          provenance: false
+
+  publish-docker-images-with-depot:
+    name: Build with Depot
+    runs-on: depot-ubuntu-latest
+    strategy:
+      matrix:
+        flavor:
+          - ""
+          - "-conda"
+          - "-kubernetes"
+        python-version:
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: depot/setup-action@v1
+      - uses: depot/build-push-action@v1
+        with:
+          context: ./upstream
+          project: v3l8p9flg1
+
+      - name: Get node version
+        id: get_node_version
+        run: |
+          echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+
+      - uses: depot/build-push-action@v1
+        with:
+          context: ./upstream
+          platforms: linux/amd64,linux/arm64
+          build-args: |
+            PYTHON_VERSION=${{ matrix.python-version }}
+            NODE_VERSION=${{ steps.get_node_version.outputs.NODE_VERSION }}
+            ${{ ( endsWith(matrix.flavor, 'conda') && 'BASE_IMAGE=prefect-conda' ) || '' }}
+            ${{ ( endsWith(matrix.flavor, 'kubernetes') && 'PREFECT_EXTRAS=[redis,kubernetes]' ) || '' }}
+          load: true
           provenance: false
