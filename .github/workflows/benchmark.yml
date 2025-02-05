@@ -35,7 +35,7 @@ jobs:
       - name: Get node version
         id: get_node_version
         run: |
-          echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+          echo "NODE_VERSION=$(cat ./upstream/nvmrc)" >> $GITHUB_OUTPUT
 
       - uses: docker/build-push-action@v6
         with:
@@ -78,7 +78,7 @@ jobs:
       - name: Get node version
         id: get_node_version
         run: |
-          echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+          echo "NODE_VERSION=$(cat ./upstream/nvmrc)" >> $GITHUB_OUTPUT
 
       - uses: depot/build-push-action@v1
         with:
