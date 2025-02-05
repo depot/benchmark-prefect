@@ -35,7 +35,7 @@ jobs:
       - name: Get node version
         id: get_node_version
         run: |
-          echo "NODE_VERSION=$(cat ./upstream/nvmrc)" >> $GITHUB_OUTPUT
+          echo "NODE_VERSION=$(cat upstream/nvmrc)" >> $GITHUB_OUTPUT
 
       - uses: docker/build-push-action@v6
         with:
@@ -70,15 +70,11 @@ jobs:
         with:
           submodules: recursive
       - uses: depot/setup-action@v1
-      - uses: depot/build-push-action@v1
-        with:
-          context: ./upstream
-          project: v3l8p9flg1
 
       - name: Get node version
         id: get_node_version
         run: |
-          echo "NODE_VERSION=$(cat ./upstream/nvmrc)" >> $GITHUB_OUTPUT
+          echo "NODE_VERSION=$(cat upstream/nvmrc)" >> $GITHUB_OUTPUT
 
       - uses: depot/build-push-action@v1
         with:
@@ -91,3 +87,4 @@ jobs:
             ${{ ( endsWith(matrix.flavor, 'kubernetes') && 'PREFECT_EXTRAS=[redis,kubernetes]' ) || '' }}
           load: true
           provenance: false
+          project: v3l8p9flg1
