@@ -14,6 +14,8 @@ jobs:
       commit: ${{ steps.detect-commit.outputs.COMMIT }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Detect submodule commit
         run: echo "COMMIT=$(git log -1 --format='%H')" >> $GITHUB_OUTPUT
         id: detect-commit
